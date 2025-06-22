@@ -1,14 +1,13 @@
-import { ObjectId } from './../../../node_modules/bson/src/objectid';
 import { Model, model, Schema } from 'mongoose';
 import { BorrowInstanceMethod, IBorrow } from './../interfaces/borrow.interface';
 
 const borrowSchema=new Schema<IBorrow, Model<IBorrow>,BorrowInstanceMethod>({
     book:{type:Schema.Types.ObjectId,ref:"Book",required:true},
-    quantity:{type:Number,min:[0,'Copies must be a positive number']},
-    dueDate:{Date}
+    quantity:{type:Number,min:[0,'Copies must be a positive number'],required:true},
+    dueDate:{type:Date,required:true}
 },{
-    versionKey:false,
-    timestamps:true
+    timestamps:true,
+    versionKey:false
 })
 
 borrowSchema.method('updateAvailability',function updateAvailability(copies:number){

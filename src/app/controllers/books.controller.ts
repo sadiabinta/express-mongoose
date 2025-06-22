@@ -41,13 +41,14 @@ booksRoutes.get('/',async(req:Request,res:Response)=>{
     // const genre=req.params
     try{
         let books=[]
-        const genre=req.query.filter
-        if(genre){
-            books=await Book.find({genre:genre});
+        const {filter,sortBy,sort,limit}:any=req.query;
+        const limitNum=limit?limit:10;
+        if(filter){
+            books=await Book.find({genre:filter}).sort({[sortBy]:sort}).limit(limitNum);
         }
         else{
 
-            books=await Book.find();
+            books=await Book.find().sort({[sortBy]:sort}).limit(limitNum);
         }
 
     res.status(201).json({
@@ -64,17 +65,35 @@ booksRoutes.get('/',async(req:Request,res:Response)=>{
     }
 })
 booksRoutes.get('/:bookId',async(req:Request,res:Response)=>{
-    const bookId=req.params.bookId;
+    try{
+        const bookId=req.params.bookId;
     const book=await Book.findById(bookId);
+    if(book){
 
-    res.status(201).json({
-        success:true,
-        message:"Book retrieved successfully",
-        data:book
+        res.status(201).json({
+            success:true,
+            message:"Book retrieved successfully",
+            data:book
+        })
+    }
+    else{
+        res.status(404).json({
+            success:false,
+            message:"Book Not Found",
+            data:book
+        })
+    }
+    }catch(error){
+        res.status(404).json({
+            message:"Validation failed",
+            success:false,
+            error
     })
+    }
 })
 booksRoutes.patch('/:bookId',async(req:Request,res:Response)=>{
-    const bookId=req.params.bookId;
+    try{
+        const bookId=req.params.bookId;
     const updatedInfo=req.body;
     const book=await Book.findByIdAndUpdate(bookId,updatedInfo,{new:true});
 
@@ -83,9 +102,17 @@ booksRoutes.patch('/:bookId',async(req:Request,res:Response)=>{
         message:"Book updated successfully",
         data:book
     })
+    }catch(error){
+        res.status(404).json({
+            message:"Validation failed",
+            success:false,
+            error
+    })
+    }
 })
 booksRoutes.delete('/:bookId',async(req:Request,res:Response)=>{
-    const bookId=req.params.bookId;
+    try{
+        const bookId=req.params.bookId;
     const book=await Book.findOneAndDelete({_id:bookId},{new:true});
 
     res.status(201).json({
@@ -93,4 +120,11 @@ booksRoutes.delete('/:bookId',async(req:Request,res:Response)=>{
         message:"Book deleted successfully",
         data:book
     })
+    }catch(error){
+        res.status(404).json({
+            message:"Validation failed",
+            success:false,
+            error
+    })
+    }
 })
