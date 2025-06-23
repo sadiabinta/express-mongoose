@@ -4,11 +4,11 @@ exports.Borrow = void 0;
 const mongoose_1 = require("mongoose");
 const borrowSchema = new mongoose_1.Schema({
     book: { type: mongoose_1.Schema.Types.ObjectId, ref: "Book", required: true },
-    quantity: { type: Number, min: [0, 'Copies must be a positive number'] },
-    dueDate: { Date }
+    quantity: { type: Number, min: [0, 'Copies must be a positive number'], required: true },
+    dueDate: { type: Date, required: true }
 }, {
-    versionKey: false,
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 borrowSchema.method('updateAvailability', function updateAvailability(copies) {
     if (copies == 0) {
