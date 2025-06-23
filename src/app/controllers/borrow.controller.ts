@@ -5,23 +5,34 @@ import { Borrow } from "../models/borrow.model"
 export const borrowRoutes=express.Router()
 
 borrowRoutes.post('/',async(req:Request,res:Response)=>{
-    const body=req.body;
-    const bookId=body.book
-    const borrow=await Borrow.create(body)
+    try{
+      const { book: bookId, quantity } = req.body;
 
-    const updatedBook=await Book.findOneAndUpdate({ _id: bookId, copies: { $gt: 0 } },
-    { $inc: { copies: -1 } },{ new: true } )
-
+    const updatedBook=await Book.borrowBook(bookId,quantity)
+ 
+      const borrow = await Borrow.create({
+      book: bookId,
+      quantity,
+      dueDate: req.body.dueDate
+    });
 
     res.status(201).json({
         success:true,
         message:"Book borrowed successfully",
         data:borrow
     })
+    }catch(error){
+       res.status(404).json({
+            message:"Validation failed",
+            success:false,
+            error
+    })
+    }
 })
 
 borrowRoutes.get('/',async(req:Request,res:Response)=>{
-    const borrowedBook=await Borrow.aggregate([
+    try{
+      const borrowedBook=await Borrow.aggregate([
           {
     $group: {
       _id: "$book",
@@ -56,4 +67,11 @@ borrowRoutes.get('/',async(req:Request,res:Response)=>{
         message:"Borrowed books summary retrieved successfully",
         data:borrowedBook
     })
+    }catch(error){
+      res.status(404).json({
+            message:"Validation failed",
+            success:false,
+            error
+    })
+    }
 })

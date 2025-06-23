@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose"
-import { IBook } from "../interfaces/book.interface"
+import { BookModel, IBook } from "../interfaces/book.interface"
 
-const bookSchema=new Schema<IBook>({
+const bookSchema=new Schema<IBook,BookModel>({
     title:{type:String,required:true,trim:true},
     author:{type:String,required:true,trim:true},
     genre:{
@@ -15,7 +15,28 @@ const bookSchema=new Schema<IBook>({
 },{
     timestamps:true,
     versionKey:false
-}
-)
+});
 
-export const Book=model<IBook>("Book",bookSchema)
+bookSchema.statics.borrowBook = async function (bookId: string, quantity: number): Promise<IBook | null> {
+  const updatedBook = await this.findOneAndUpdate(
+    { _id: bookId, copies: { $gte: quantity } },
+    { 
+      $inc: { copies: -quantity } 
+    },
+    { new: true }
+  );
+
+  if (updatedBook) {
+    if (updatedBook.copies === 0 && updatedBook.available !== false) {
+      updatedBook.available = false;
+      await updatedBook.save();
+    } else if (updatedBook.copies > 0 && updatedBook.available !== true) {
+      updatedBook.available = true;
+      await updatedBook.save();
+    }
+  }
+
+  return updatedBook;
+};
+
+export const Book=model<IBook,BookModel>("Book",bookSchema)
