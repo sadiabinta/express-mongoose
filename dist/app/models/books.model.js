@@ -18,4 +18,20 @@ const bookSchema = new mongoose_1.Schema({
     timestamps: true,
     versionKey: false
 });
+bookSchema.statics.borrowBook = async function (bookId, quantity) {
+    const updatedBook = await this.findOneAndUpdate({ _id: bookId, copies: { $gte: quantity } }, {
+        $inc: { copies: -quantity }
+    }, { new: true });
+    if (updatedBook) {
+        if (updatedBook.copies === 0 && updatedBook.available !== false) {
+            updatedBook.available = false;
+            await updatedBook.save();
+        }
+        else if (updatedBook.copies > 0 && updatedBook.available !== true) {
+            updatedBook.available = true;
+            await updatedBook.save();
+        }
+    }
+    return updatedBook;
+};
 exports.Book = (0, mongoose_1.model)("Book", bookSchema);

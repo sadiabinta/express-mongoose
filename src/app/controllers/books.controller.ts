@@ -37,32 +37,26 @@ booksRoutes.post('/',async(req:Request,res:Response)=>{
     }
 })
 booksRoutes.get('/',async(req:Request,res:Response)=>{
-
-    // const genre=req.params
     try{
         let books=[]
         const {filter,sortBy,sort,limit}:any=req.query;
         const limitNum=limit?limit:10;
-        if(filter){
-            books=await Book.find({genre:filter}).sort({[sortBy]:sort}).limit(limitNum);
-        }
-        else{
+        const filterCondition=filter?{genre:filter}:{}
+        
+        books=await Book.find(filterCondition).sort({ [sortBy]: sort === 'desc' ? -1 : 1 }).limit(limitNum);
 
-            books=await Book.find().sort({[sortBy]:sort}).limit(limitNum);
+        res.status(201).json({
+            success:true,
+            message:"Book retrieved successfully",
+            data:books
+        })
+        }catch(error){
+            res.status(404).json({
+                message:"Validation failed",
+                success:false,
+                error
+        })
         }
-
-    res.status(201).json({
-        success:true,
-        message:"Book retrieved successfully",
-        data:books
-    })
-    }catch(error){
-        res.status(404).json({
-            message:"Validation failed",
-            success:false,
-            error
-    })
-    }
 })
 booksRoutes.get('/:bookId',async(req:Request,res:Response)=>{
     try{
