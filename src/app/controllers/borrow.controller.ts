@@ -18,7 +18,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
       dueDate: req.body.dueDate,
     });
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Book borrowed successfully",
       data: borrow,
@@ -64,7 +64,7 @@ borrowRoutes.get("/", async (req: Request, res: Response) => {
       },
     ]);
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Borrowed books summary retrieved successfully",
       data: borrowedBook,

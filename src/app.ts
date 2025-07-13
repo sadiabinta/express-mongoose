@@ -1,29 +1,25 @@
 import express, { Application, Request, Response } from "express";
+import cors from "cors";
 import { booksRoutes } from "./app/controllers/books.controller";
 import { borrowRoutes } from "./app/controllers/borrow.controller";
-import cors from "cors";
 
 const app: Application = express();
 
 app.use(
   cors({
-    origin: [
-      "https://redux-api-ten-omega.vercel.app",
-      "http://localhost:5173",
-      "https://redux-lllsn0cn9-sadiabintas-projects.vercel.app",
-      "https://redux-api-sadiabintas-projects.vercel.app/",
-      "https://redux-api-sadiabinta-sadiabintas-projects.vercel.app/",
-    ],
+    origin: "*",
     methods: ["GET", "POST", "PATCH", "DELETE"],
-    credentials: true,
   })
 );
-app.use(express.json());
+
 app.use((req, res, next) => {
-  console.log("Request Headers:", req.headers);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
+app.use(express.json());
 app.use("/api/books", booksRoutes);
 app.use("/api/borrow", borrowRoutes);
 
