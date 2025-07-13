@@ -36,17 +36,12 @@ exports.booksRoutes.post('/', async (req, res) => {
     }
 });
 exports.booksRoutes.get('/', async (req, res) => {
-    // const genre=req.params
     try {
         let books = [];
         const { filter, sortBy, sort, limit } = req.query;
         const limitNum = limit ? limit : 10;
-        if (filter) {
-            books = await books_model_1.Book.find({ genre: filter }).sort({ [sortBy]: sort }).limit(limitNum);
-        }
-        else {
-            books = await books_model_1.Book.find().sort({ [sortBy]: sort }).limit(limitNum);
-        }
+        const filterCondition = filter ? { genre: filter } : {};
+        books = await books_model_1.Book.find(filterCondition).sort({ [sortBy]: sort === 'desc' ? -1 : 1 }).limit(limitNum);
         res.status(201).json({
             success: true,
             message: "Book retrieved successfully",
