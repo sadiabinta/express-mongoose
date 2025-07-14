@@ -5,7 +5,7 @@ import app from "./app";
 
 dotenv.config();
 let server: Server;
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 const uri = process.env.MONGODB_URI!;
 
 async function main() {

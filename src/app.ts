@@ -5,21 +5,34 @@ import { borrowRoutes } from "./app/controllers/borrow.controller";
 
 const app: Application = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-  })
-);
+const allowedOrigins = [
+  "https://redux-api-sadiabintas-projects.vercel.app",
+  "https://redux-api-ten-omega.vercel.app",
+  "https://redux-api-sadiabinta-sadiabintas-projects.vercel.app",
+  "https://redux-h22qjkbs5-sadiabintas-projects.vercel.app",
+  "http://localhost:5173",
+];
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+const corsOptions = {
+  origin: (origin: string | undefined, callback: Function) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: false,
+};
+
+app.use(cors(corsOptions));
+
+// Enable OPTIONS preflight for all routes
+// app.options("/*", cors(corsOptions));
 
 app.use(express.json());
+
+// Your routes (check these files for route param errors)
 app.use("/api/books", booksRoutes);
 app.use("/api/borrow", borrowRoutes);
 
