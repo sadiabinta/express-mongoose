@@ -19,9 +19,9 @@ const corsOptions = {
     }
   },
   methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
   credentials: false,
 };
-
 app.use(cors(corsOptions));
 
 // Enable OPTIONS preflight for all routes
