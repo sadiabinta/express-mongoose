@@ -30,8 +30,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // Your routes (check these files for route param errors)
-app.use("/api/books", booksRoutes);
-app.use("/api/borrow", borrowRoutes);
+app.use("/books", booksRoutes);
+app.use("/borrow", borrowRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send(`Welcome to the Library Management System`);
