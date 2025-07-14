@@ -5,9 +5,12 @@ import app from "./app";
 
 dotenv.config();
 let server: Server;
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const uri = process.env.MONGODB_URI!;
 
+if (!process.env.MONGODB_URI) {
+  throw new Error("MONGODB_URI not defined in .env");
+}
 async function main() {
   try {
     await mongoose.connect(uri);

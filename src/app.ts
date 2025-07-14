@@ -6,10 +6,7 @@ import { borrowRoutes } from "./app/controllers/borrow.controller";
 const app: Application = express();
 
 const allowedOrigins = [
-  "https://redux-api-sadiabintas-projects.vercel.app",
   "https://redux-api-ten-omega.vercel.app",
-  "https://redux-api-sadiabinta-sadiabintas-projects.vercel.app",
-  "https://redux-h22qjkbs5-sadiabintas-projects.vercel.app",
   "http://localhost:5173",
 ];
 
